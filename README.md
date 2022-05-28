@@ -55,8 +55,8 @@ After you create a lambda function, you can check if everything is alright by us
   <img src="https://github.com/zekeriyyaa/Building-Robotic-Data-Pipeline-Via-Amazon-Web-Services/blob/main/img/Lambda2.PNG" width="60%">
 </p>
 
-#### Write Lambda Function
-Write a function that is triggered by Amazon S3 when a new object is created. This function gets the JSON content of the object and sends it into an Amazon Dynamodb table.
+#### Write Lambda Function Code
+Write a [lambda function](https://github.com/zekeriyyaa/Building-Robotic-Data-Pipeline-Via-Amazon-Web-Services/blob/main/lambda_function.py) that is triggered by Amazon S3 when a new object is created. This function gets the JSON content of the object and sends it into an Amazon Dynamodb table.
 
 
 ```python3
@@ -111,7 +111,7 @@ You can use the following example.
   <img src="https://github.com/zekeriyyaa/Building-Robotic-Data-Pipeline-Via-Amazon-Web-Services/blob/main/img/Lambda4.PNG" width="60%">
 </p>
 
-S3 Put template includes the following information. You have to edit __bucket->name__ and __object->key__ for your system.
+S3 Put template includes the following information. You have to edit __s3->bucket->name__ and __object->key__ for your system. You can accesss all content [here](https://github.com/zekeriyyaa/Building-Robotic-Data-Pipeline-Via-Amazon-Web-Services/blob/main/AWSLambdaTest.json).
 
 ```json
 {
@@ -153,8 +153,196 @@ S3 Put template includes the following information. You have to edit __bucket->n
   ]
 }
 ```
+Finally, you can test your Lambda function with the test content and you will get the response as follow:
+<p align="center" width="100%">
+  <img src="https://github.com/zekeriyyaa/Building-Robotic-Data-Pipeline-Via-Amazon-Web-Services/blob/main/img/Lambda5.PNG" width="60%">
+</p>
 
 ### 3. Create AWS S3 Bucket & Event Trigger
+We create a bucket to store the coming messages into Amazon S3 with. Whenever a new object is created, the bucket triggers a lambda function that we created in the previous step. Follow the given steps:
+1. Create a bucket with default settings
+2. Open the bucket and go to the Properties section
+3. Create a new event notification by selecting "all object create events"
+4. Specify the destination as "Lambda function" and select the lambda function that you created in the previous step.
+<p align="center" width="100%">
+  <img src="https://github.com/zekeriyyaa/Building-Robotic-Data-Pipeline-Via-Amazon-Web-Services/blob/main/img/S3Bucket4.PNG" width="45%" height="300px">
+  <img src="https://github.com/zekeriyyaa/Building-Robotic-Data-Pipeline-Via-Amazon-Web-Services/blob/main/img/S3Bucket5.PNG" width="45%" height="300px">
+</p>
+
+Finally, you will get the same view as follow:
+<p align="center" width="100%">
+  <img src="https://github.com/zekeriyyaa/Building-Robotic-Data-Pipeline-Via-Amazon-Web-Services/blob/main/img/S3Bucket2.PNG" width="60%">
+</p>
+
 ### 4. Create AWS DynamoDb Table
-### 5. Run The Demo 
+We need to create a Dynamodb table that can store the contents of our robotics data. We specify a partition key as the ID of the content as shown below. We don't have to specify all attributes one by one to store data because dynamodb automatically creates attributes that your S3 object included. 
+<p align="center" width="100%">
+  <img src="https://github.com/zekeriyyaa/Building-Robotic-Data-Pipeline-Via-Amazon-Web-Services/blob/main/img/DynamoDB1.PNG" width="60%">
+</p>
+
+### 5. Run The Demo
+Follow the given steps to start a demo:
+1. Be sure that you specify your credentials in [AWSCredentials.py](https://github.com/zekeriyyaa/Building-Robotic-Data-Pipeline-Via-Amazon-Web-Services/blob/main/AWSCredentials.py)
+2. Open a terminal and start ROS by using "roscore" command.
+3. Run the [odomPublisher.py](https://github.com/zekeriyyaa/Building-Robotic-Data-Pipeline-Via-Amazon-Web-Services/blob/main/odomPublisher.py) to publish the odometry data via "odom" topic. 
+```python3
+#!/usr/bin/env python3
+import math
+from math import sin, cos, pi
+
+import rospy
+import tf
+from nav_msgs.msg import Odometry
+from geometry_msgs.msg import Point, Pose, Quaternion, Twist, Vector3
+
+rospy.init_node('odometry_publisher')
+
+odom_pub = rospy.Publisher("odom", Odometry, queue_size=50)
+odom_broadcaster = tf.TransformBroadcaster()
+
+x = 0.0
+y = 0.0
+th = 0.0
+
+vx = 0.1
+vy = -0.1
+vth = 0.1
+
+current_time = rospy.Time.now()
+last_time = rospy.Time.now()
+
+r = rospy.Rate(0.2)
+while not rospy.is_shutdown():
+    current_time = rospy.Time.now()
+
+    # compute odometry in a typical way given the velocities of the robot
+    dt = (current_time - last_time).to_sec()
+    delta_x = (vx * cos(th) - vy * sin(th)) * dt
+    delta_y = (vx * sin(th) + vy * cos(th)) * dt
+    delta_th = vth * dt
+
+    x += delta_x
+    y += delta_y
+    th += delta_th
+
+    # since all odometry is 6DOF we'll need a quaternion created from yaw
+    odom_quat = tf.transformations.quaternion_from_euler(0, 0, th)
+
+    # first, we'll publish the transform over tf
+    odom_broadcaster.sendTransform(
+        (x, y, 0.),
+        odom_quat,
+        current_time,
+        "base_link",
+        "odom"
+    )
+
+    # next, we'll publish the odometry message over ROS
+    odom = Odometry()
+    odom.header.stamp = current_time
+    odom.header.frame_id = "odom"
+
+    # set the position
+    odom.pose.pose = Pose(Point(x, y, 0.), Quaternion(*odom_quat))
+
+    # set the velocity
+    odom.child_frame_id = "base_link"
+    odom.twist.twist = Twist(Vector3(vx, vy, 0), Vector3(0, 0, vth))
+
+    # publish the message
+    odom_pub.publish(odom)
+
+    last_time = current_time
+    r.sleep()
+```
+
+5. Run the [sendRoboticData2AWSS3.py](https://github.com/zekeriyyaa/Building-Robotic-Data-Pipeline-Via-Amazon-Web-Services/blob/main/sendRoboticData2AWSS3.py) to subscribe "odom" topic and send the data to Amazon S3.
+```python3
+import rospy
+from nav_msgs.msg import Odometry
+from datetime import datetime
+import json
+import boto3
+import AWSCredentials
+
+# packet ID ( primary key ID for dynamoDB )
+count = 0
+
+# Creating Session With Boto3.
+session = boto3.Session(
+    aws_access_key_id=AWSCredentials.my_access_key_id,
+    aws_secret_access_key=AWSCredentials.my_secret_access_key
+)
+
+# Creating S3 Resource From the Session.
+s3 = session.resource('s3')
+
+
+def callback(msg):
+    """ get data from ROS
+    :param msg: Message packet coming from ROS topic
+    :return: No return value
+    """
+
+    global count
+    message = {
+        "ID": str(count),
+        "PoseX": str("{0:.5f}".format(msg.pose.pose.position.x)),
+        "PoseY": str("{0:.5f}".format(msg.pose.pose.position.y)),
+        "PoseZ": str("{0:.5f}".format(msg.pose.pose.position.z)),
+        "OrientX": str("{0:.5f}".format(msg.pose.pose.orientation.x)),
+        "OrientY": str("{0:.5f}".format(msg.pose.pose.orientation.y)),
+        "OrientZ": str("{0:.5f}".format(msg.pose.pose.orientation.z)),
+        "OrientW": str("{0:.5f}".format(msg.pose.pose.orientation.w))
+    }
+
+    print(f"Producing message {datetime.now()} Message :\n {str(message)}")
+    count += 1
+
+    try:
+        # Getting AWS S3 response
+        response = uploadData2AWS(content=message, object_name="odom_" + str(count) + ".json")
+
+        if response.get('HTTPStatusCode') == 200:
+            print('File Uploaded Successfully')
+        else:
+            print('File Not Uploaded')
+
+    except Exception as e:
+        print(e)
+
+
+def uploadData2AWS(content: dict = None, object_name: str = "test") -> dict:
+    """ upload data to AWS S3 bucket
+    :param data: ROS message content to be uploaded
+    :return: aws object upload response (200 means successfully uploaded, otherwise there are an error)
+    """
+
+    # Creating S3 object
+    object = s3.Object(AWSCredentials.my_bucket_name, object_name)
+
+    # Uploading content to AWS S3
+    result = object.put(Body=json.dumps(content))
+
+    # Getting result
+    return result.get('ResponseMetadata')
+
+
+if __name__ == "__main__":
+    rospy.init_node('odomSubscriber', anonymous=True)
+    rospy.Subscriber('odom', Odometry, callback)
+    rospy.spin()
+```
+
+After everything is ready you can see the content of robotic data send to Amazon S3 on your terminal as follow:
+
+<p align="center" width="100%">
+  <img src="https://github.com/zekeriyyaa/Building-Robotic-Data-Pipeline-Via-Amazon-Web-Services/blob/main/img/uploadData2AWSS3.png" width="60%">
+</p>
+
+Consequently, your robotic data is automatically stored in Dynamodb. When you check your table you will get the same view as follow:
+
+<p align="center" width="100%">
+  <img src="https://github.com/zekeriyyaa/Building-Robotic-Data-Pipeline-Via-Amazon-Web-Services/blob/main/img/DynamoDB2.PNG" width="60%">
+</p>
 

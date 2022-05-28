@@ -25,7 +25,7 @@ Follow the given steps:<br/>
 6. Run The Demo 
 
 ### 1. Prepare the robotic environment
-You can utilize this [URL](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-20-04)
+You can utilize this [URL](http://wiki.ros.org/noetic/Installation/Ubuntu)
 
 ### 2. Define Identity and Access Management (IAM) Policy & Role
 First we need to create an appropriate policy that covers both S3 and DynamoDB permissions. Actually we only need permission to read from S3 and write to DynamoDB. Additionally, we can add CloudWatch permission. Follow the given way. 

@@ -165,8 +165,8 @@ We create a bucket to store the coming messages into Amazon S3 with. Whenever a 
 3. Create a new event notification by selecting "all object create events"
 4. Specify the destination as "Lambda function" and select the lambda function that you created in the previous step.
 <p align="center" width="100%">
-  <img src="https://github.com/zekeriyyaa/Building-Robotic-Data-Pipeline-Via-Amazon-Web-Services/blob/main/img/S3Bucket4.PNG" width="45%" height="300px">
-  <img src="https://github.com/zekeriyyaa/Building-Robotic-Data-Pipeline-Via-Amazon-Web-Services/blob/main/img/S3Bucket5.PNG" width="45%" height="300px">
+  <img src="https://github.com/zekeriyyaa/Building-Robotic-Data-Pipeline-Via-Amazon-Web-Services/blob/main/img/S3Bucket4.PNG" width="40%" height="250px">
+  <img src="https://github.com/zekeriyyaa/Building-Robotic-Data-Pipeline-Via-Amazon-Web-Services/blob/main/img/S3Bucket5.PNG" width="40%" height="250px">
 </p>
 
 Finally, you will get the same view as follow:

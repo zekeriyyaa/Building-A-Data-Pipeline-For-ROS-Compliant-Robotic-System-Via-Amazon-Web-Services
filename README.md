@@ -16,22 +16,22 @@ Cloud-based solutions can be an alternative way to overcome these problems. In t
     <img src="https://github.com/zekeriyyaa/Building-Robotic-Data-Pipeline-Via-Amazon-Web-Services/blob/main/img/Architecture.PNG"> 
 </p>
 
-Follow the given steps:
-0. Prepare the robotic environment
-1. Define Identity and Access Management (IAM) Policy & Role
-2. Prepare AWS Lambda Function & Code
-3. Prepare AWS S3 Bucket & Event Trigger
-4. Prepare AWS DynamoDb Table
-5. Run The Demo 
+Follow the given steps:<br/>
+1. Prepare the robotic environment
+2. Define Identity and Access Management (IAM) Policy & Role
+3. Prepare AWS Lambda Function & Code
+4. Prepare AWS S3 Bucket & Event Trigger
+5. Prepare AWS DynamoDb Table
+6. Run The Demo 
 
-### 0. Prepare the robotic environment
+### 1. Prepare the robotic environment
 You can utilize this [URL](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-20-04)
 
-### 1. Define Identity and Access Management (IAM) Policy & Role
+### 2. Define Identity and Access Management (IAM) Policy & Role
 First we need to create an appropriate policy that covers both S3 and DynamoDB permissions. Actually we only need permission to read from S3 and write to DynamoDB. Additionally, we can add CloudWatch permission. Follow the given way. 
->:exclamation: You can find all datails of policy creation process in the [/img/IAM**](https://github.com/zekeriyyaa/Building-Robotic-Data-Pipeline-Via-Amazon-Web-Services/tree/main/img) folder.
+>:exclamation: You can find all datails of policy creation process in the [/img](https://github.com/zekeriyyaa/Building-Robotic-Data-Pipeline-Via-Amazon-Web-Services/tree/main/img) folder.
 <p align="center" width="100%">
-  <img src="https://github.com/zekeriyyaa/Building-Robotic-Data-Pipeline-Via-Amazon-Web-Services/blob/main/img/IAMCompletePolicy.PNG" width="60%">
+  <img src="https://github.com/zekeriyyaa/Building-Robotic-Data-Pipeline-Via-Amazon-Web-Services/blob/main/img/IAMCompletePolicy.PNG"">
 </p>
 
 After you create the policy, you must define a role with the policy permission you just defined. Follow the given steps:
@@ -40,19 +40,19 @@ After you create the policy, you must define a role with the policy permission y
 3. Add Permission: Select the policy you just create
 4. Name and create your role 
 
->:exclamation: You can find all datails of policy creation process in the [/img/IAM**](https://github.com/zekeriyyaa/Building-Robotic-Data-Pipeline-Via-Amazon-Web-Services/tree/main/img) folder.
+>:exclamation: You can find all datails of policy creation process in the [/img](https://github.com/zekeriyyaa/Building-Robotic-Data-Pipeline-Via-Amazon-Web-Services/tree/main/img) folder.
 
-### 2. Create AWS Lambda Function & Code
+### 3. Create AWS Lambda Function & Code
 We will use the lambda function to receive data content from S3 and store it to Dynamodb. First, create a lambda function as given below. Be careful to select an existing permission role that you created the previous step.
->:exclamation: You can find all datails of policy creation process in the [/img/Lambda**](https://github.com/zekeriyyaa/Building-Robotic-Data-Pipeline-Via-Amazon-Web-Services/tree/main/img) folder.
+>:exclamation: You can find all datails of policy creation process in the [/img](https://github.com/zekeriyyaa/Building-Robotic-Data-Pipeline-Via-Amazon-Web-Services/tree/main/img) folder.
 <p align="center" width="100%">
-  <img src="https://github.com/zekeriyyaa/Building-Robotic-Data-Pipeline-Via-Amazon-Web-Services/blob/main/img/Lambda1.PNG" width="60%">
+  <img src="https://github.com/zekeriyyaa/Building-Robotic-Data-Pipeline-Via-Amazon-Web-Services/blob/main/img/Lambda1.PNG" >
 </p>
 
 #### Check Lambda Function Permission
 After you create a lambda function, you can check if everything is alright by using the permissions setting under the configuration section as shown below. It is expected that the function has three different levels of permission to access S3, Dynamodb, and CloudWatch.
 <p align="center" width="100%">
-  <img src="https://github.com/zekeriyyaa/Building-Robotic-Data-Pipeline-Via-Amazon-Web-Services/blob/main/img/Lambda2.PNG" width="60%">
+  <img src="https://github.com/zekeriyyaa/Building-Robotic-Data-Pipeline-Via-Amazon-Web-Services/blob/main/img/Lambda2.PNG" >
 </p>
 
 #### Write Lambda Function Code
@@ -108,7 +108,7 @@ Once you create a lambda function, AWS allows you to test it with your custom co
 5. Save and Test
 You can use the following example.
 <p align="center" width="100%">
-  <img src="https://github.com/zekeriyyaa/Building-Robotic-Data-Pipeline-Via-Amazon-Web-Services/blob/main/img/Lambda4.PNG" width="60%">
+  <img src="https://github.com/zekeriyyaa/Building-Robotic-Data-Pipeline-Via-Amazon-Web-Services/blob/main/img/Lambda4.PNG" >
 </p>
 
 S3 Put template includes the following information. You have to edit __s3->bucket->name__ and __object->key__ for your system. You can accesss all content [here](https://github.com/zekeriyyaa/Building-Robotic-Data-Pipeline-Via-Amazon-Web-Services/blob/main/AWSLambdaTest.json).
@@ -155,10 +155,10 @@ S3 Put template includes the following information. You have to edit __s3->bucke
 ```
 Finally, you can test your Lambda function with the test content and you will get the response as follow:
 <p align="center" width="100%">
-  <img src="https://github.com/zekeriyyaa/Building-Robotic-Data-Pipeline-Via-Amazon-Web-Services/blob/main/img/Lambda5.PNG" width="60%">
+  <img src="https://github.com/zekeriyyaa/Building-Robotic-Data-Pipeline-Via-Amazon-Web-Services/blob/main/img/Lambda5.PNG" >
 </p>
 
-### 3. Create AWS S3 Bucket & Event Trigger
+### 4. Create AWS S3 Bucket & Event Trigger
 We create a bucket to store the coming messages into Amazon S3 with. Whenever a new object is created, the bucket triggers a lambda function that we created in the previous step. Follow the given steps:
 1. Create a bucket with default settings
 2. Open the bucket and go to the Properties section
@@ -171,16 +171,16 @@ We create a bucket to store the coming messages into Amazon S3 with. Whenever a 
 
 Finally, you will get the same view as follow:
 <p align="center" width="100%">
-  <img src="https://github.com/zekeriyyaa/Building-Robotic-Data-Pipeline-Via-Amazon-Web-Services/blob/main/img/S3Bucket2.PNG" width="60%">
+  <img src="https://github.com/zekeriyyaa/Building-Robotic-Data-Pipeline-Via-Amazon-Web-Services/blob/main/img/S3Bucket2.PNG" >
 </p>
 
-### 4. Create AWS DynamoDb Table
+### 5. Create AWS DynamoDb Table
 We need to create a Dynamodb table that can store the contents of our robotics data. We specify a partition key as the ID of the content as shown below. We don't have to specify all attributes one by one to store data because dynamodb automatically creates attributes that your S3 object included. 
 <p align="center" width="100%">
-  <img src="https://github.com/zekeriyyaa/Building-Robotic-Data-Pipeline-Via-Amazon-Web-Services/blob/main/img/DynamoDB1.PNG" width="60%">
+  <img src="https://github.com/zekeriyyaa/Building-Robotic-Data-Pipeline-Via-Amazon-Web-Services/blob/main/img/DynamoDB1.PNG" >
 </p>
 
-### 5. Run The Demo
+### 6. Run The Demo
 Follow the given steps to start a demo:
 1. Be sure that you specify your credentials in [AWSCredentials.py](https://github.com/zekeriyyaa/Building-Robotic-Data-Pipeline-Via-Amazon-Web-Services/blob/main/AWSCredentials.py)
 2. Open a terminal and start ROS by using "roscore" command.
@@ -337,12 +337,12 @@ if __name__ == "__main__":
 After everything is ready you can see the content of robotic data send to Amazon S3 on your terminal as follow:
 
 <p align="center" width="100%">
-  <img src="https://github.com/zekeriyyaa/Building-Robotic-Data-Pipeline-Via-Amazon-Web-Services/blob/main/img/uploadData2AWSS3.png" width="60%">
+  <img src="https://github.com/zekeriyyaa/Building-Robotic-Data-Pipeline-Via-Amazon-Web-Services/blob/main/img/uploadData2AWSS3.png" >
 </p>
 
 Consequently, your robotic data is automatically stored in Dynamodb. When you check your table you will get the same view as follow:
 
 <p align="center" width="100%">
-  <img src="https://github.com/zekeriyyaa/Building-Robotic-Data-Pipeline-Via-Amazon-Web-Services/blob/main/img/DynamoDB2.PNG" width="60%">
+  <img src="https://github.com/zekeriyyaa/Building-Robotic-Data-Pipeline-Via-Amazon-Web-Services/blob/main/img/DynamoDB2.PNG" >
 </p>
 

@@ -42,13 +42,13 @@ After you create the policy, you must define a role with the policy permission y
 
 >:exclamation: You can find all datails of policy creation process in the [/img](https://github.com/zekeriyyaa/Building-Robotic-Data-Pipeline-Via-Amazon-Web-Services/tree/main/img) folder.
 
-### 3. Create AWS DynamoDb Table
+### 3. Prepare AWS DynamoDb Table
 We need to create a Dynamodb table that can store the contents of our robotics data. We specify a partition key as the ID of the content as shown below. We don't have to specify all attributes one by one to store data because dynamodb automatically creates attributes that your S3 object included. 
 <p align="center" width="100%">
   <img src="https://github.com/zekeriyyaa/Building-Robotic-Data-Pipeline-Via-Amazon-Web-Services/blob/main/img/DynamoDB1.PNG" >
 </p>
                                                                                                                              
-### 4. Create AWS Lambda Function & Code
+### 4. Prepare AWS Lambda Function & Code
 We will use the lambda function to receive data content from S3 and store it to Dynamodb. First, create a lambda function as given below. Be careful to select an existing permission role that you created the previous step.
 >:exclamation: You can find all datails of policy creation process in the [/img](https://github.com/zekeriyyaa/Building-Robotic-Data-Pipeline-Via-Amazon-Web-Services/tree/main/img) folder.
 <p align="center" width="100%">
@@ -164,7 +164,7 @@ Finally, you can test your Lambda function with the test content and you will ge
   <img src="https://github.com/zekeriyyaa/Building-Robotic-Data-Pipeline-Via-Amazon-Web-Services/blob/main/img/Lambda5.PNG" >
 </p>
 
-### 5. Create AWS S3 Bucket & Event Trigger
+### 5. Prepare AWS S3 Bucket & Event Trigger
 We create a bucket to store the coming messages into Amazon S3 with. Whenever a new object is created, the bucket triggers a lambda function that we created in the previous step. Follow the given steps:
 1. Create a bucket with default settings
 2. Open the bucket and go to the Properties section

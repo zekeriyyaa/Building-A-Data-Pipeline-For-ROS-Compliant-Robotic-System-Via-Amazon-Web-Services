@@ -49,6 +49,12 @@ We will use the lambda function to receive data content from S3 and store it to 
   <img src="https://github.com/zekeriyyaa/Building-Robotic-Data-Pipeline-Via-Amazon-Web-Services/blob/main/img/Lambda1.PNG" width="60%">
 </p>
 
+#### Check Lambda Function Permission
+After you create a lambda function, you can check if everything is alright by using the permissions setting under the configuration section as shown below. It is expected that the function has three different levels of permission to access S3, Dynamodb, and CloudWatch.
+<p align="center" width="100%">
+  <img src="https://github.com/zekeriyyaa/Building-Robotic-Data-Pipeline-Via-Amazon-Web-Services/blob/main/img/Lambda2.PNG" width="60%">
+</p>
+
 #### Write Lambda Function
 Write a function that is triggered by Amazon S3 when a new object is created. This function gets the JSON content of the object and sends it into an Amazon Dynamodb table.
 
@@ -93,9 +99,60 @@ def lambda_handler(event, context):
                 key, bucket, table_name))
         raise e
 ```
-#### Test Your Code
+#### Test & Deploy Lambda Function
+Once you create a lambda function, AWS allows you to test it with your custom configurations. Follow the given steps to test the Lambda function:
+1. Go to the Test Section
+2. Create a new test event
+3. Name your test event
+4. Select S3 Put template and customize it for your system
+5. Save and Test
+You can use the following example.
+<p align="center" width="100%">
+  <img src="https://github.com/zekeriyyaa/Building-Robotic-Data-Pipeline-Via-Amazon-Web-Services/blob/main/img/Lambda4.PNG" width="60%">
+</p>
 
+S3 Put template includes the following information. You have to edit __bucket->name__ and __object->key__ for your system.
 
+```json
+{
+  "Records": [
+    {
+      "eventVersion": "2.0",
+      "eventSource": "aws:s3",
+      "awsRegion": "us-east-1",
+      "eventTime": "1970-01-01T00:00:00.000Z",
+      "eventName": "ObjectCreated:Put",
+      "userIdentity": {
+        "principalId": "EXAMPLE"
+      },
+      "requestParameters": {
+        "sourceIPAddress": "127.0.0.1"
+      },
+      "responseElements": {
+        "x-amz-request-id": "EXAMPLE123456789",
+        "x-amz-id-2": "EXAMPLE123/5678abcdefghijklambdaisawesome/mnopqrstuvwxyzABCDEFGH"
+      },
+      "s3": {
+        "s3SchemaVersion": "1.0",
+        "configurationId": "testConfigRule",
+        "bucket": {
+          "name": "zd-aws-robotic",
+          "ownerIdentity": {
+            "principalId": "EXAMPLE"
+          },
+          "arn": "arn:aws:s3:::example-bucket"
+        },
+        "object": {
+          "key": "odom_1.json",
+          "size": 1024,
+          "eTag": "0123456789abcdef0123456789abcdef",
+          "sequencer": "0A1B2C3D4E5F678901"
+        }
+      }
+    }
+  ]
+}
+```
 
 ### 3. Create AWS S3 Bucket & Event Trigger
 ### 4. Create AWS DynamoDb Table

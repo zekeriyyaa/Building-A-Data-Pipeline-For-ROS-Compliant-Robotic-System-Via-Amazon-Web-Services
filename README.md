@@ -1,4 +1,4 @@
-# Building-Robotic-Data-Pipeline-Via-Amazon-Web-Services
+# Building-A-Data-Pipeline-For-ROS-Compliant-Robotic-System-Via-Amazon-Web-Services
 
 Robotic systems are equipped with many sensors and produce large-scale data to reflect the system state, recognize the environment or etc. It is possible to extract meaningful analysis to be fed into to system back by analyzing these data. Considering the importance of data, the process of collecting data without any loss from sensors is of great importance. 
 <br /><br />During this process, there may be some challenges such as:
